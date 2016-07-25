@@ -10,6 +10,7 @@ module Game.Board
 , tileAt
 , updateAt
 , clear
+, revealAllMines
 , BoardAssoc
 , BoardIdx
 , Bounds
@@ -34,6 +35,16 @@ data Board = Board
   , cols  :: Int
   , tiles :: TwoDArray
   }
+
+revealAllMines :: Board -> Board
+revealAllMines b@Board{..} =
+  b{ tiles = revealedArray}
+  where
+    revealedBoard =
+      map (\case
+              Mine -> RevealedMine
+              tile -> tile) $ elems tiles
+    revealedArray = listArray (bounds tiles) revealedBoard
 
 clear :: Board -> Bool
 clear Board{..} = not . any

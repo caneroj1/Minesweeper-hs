@@ -13,8 +13,9 @@ revealTiles i board = revealFrom tile
   where tile = tileAt board i
         revealFrom Mine         = Left Defeat
         revealFrom (Revealed _) = Right board
-        revealFrom (Hidden   _) =
+        revealFrom (Hidden   0) =
           Right . revealRecursive i . updateAt board i $ reveal tile
+        revealFrom (Hidden   _) = Right . updateAt board i $ reveal tile
 
 revealRecursive :: BoardIdx -> Board -> Board
 revealRecursive (row, col) board =

@@ -20,6 +20,6 @@ instance Show Tile where
 bomb = rights $ utf8ToUnicodeEmbedErrors ['\xF0', '\x9F', '\x92', '\xA3']
 
 reveal :: Tile -> Tile
-reveal Mine           = Mine
-reveal r@(Revealed _) = r
+reveal Mine           = RevealedMine
 reveal (Hidden n)     = Revealed n
+reveal tile           = tile
