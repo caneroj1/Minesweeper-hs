@@ -22,6 +22,8 @@ library
                      , Game.RevealTiles
                      , Game.Status
                      , Game.Flow
+                     , Game.FlagTiles
+                     , Game.Move
   build-depends:       base >= 4.7 && < 5
                      , array
                      , split

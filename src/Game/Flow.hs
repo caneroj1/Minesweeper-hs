@@ -4,7 +4,9 @@ import Game.Board
 import Game.RevealTiles
 import Game.SetupBoard
 import Game.Status
+import Game.FlagTiles
 import Game.Tile
+import Game.Move
 import Control.Monad.State.Lazy
 import System.Exit
 import System.Console.Haskeline
@@ -26,13 +28,13 @@ minesweeper rows cols = evalStateT gameFlow $ mb10--emptyBoard rows cols
     mb9 = updateAt mb8 (7, 5) Mine
     mb10 = setupBoard mb9
 
-printStatus :: BoardIdx -> Either Defeat Board -> GameFlow
-printStatus move (Left _) = do
+printStatus :: Either Defeat Board -> GameFlow
+printStatus (Left _) = do
   board <- get
   lift . print $ revealAllMines board
   lift $ putStrLn "Defeat!"
   lift exitSuccess
-printStatus _ (Right b)   =
+printStatus (Right b)   =
   if clear b
     then do
       lift $ putStrLn  "Victory!"
@@ -40,22 +42,24 @@ printStatus _ (Right b)   =
       lift exitSuccess
     else put b
 
-getInput :: IO (Int, Int)
+getInput :: IO Move
 getInput = do
-  line <- runInputT defaultSettings $ getInputLine "Your move: "
-  return $ processLn line
+  line <- runInputT defaultSettings $ getInputLine "Action: "
+  return $ toMove line
   where
-    processLn Nothing   = undefined
-    processLn (Just ln) = toTup
-                        . map (read . unpack)
-                        . split (== ',')
-                        $ pack ln
-    toTup [x, y] = (x, y)
+    toMove Nothing       = None
+    toMove (Just string) = read string
+
+execMove :: Move -> Board -> GameFlow
+execMove (RevealTile i) board = printStatus $ revealTiles i board
+execMove (FlagTile   i) board = put $ flag i board
+execMove (UnflagTile i) board = put $ unflag i board
+execMove None       _     = return ()
 
 gameFlow :: GameFlow
 gameFlow = do
   board <- get
   lift $ print board
   move <- lift getInput
-  printStatus move $ revealTiles move board
+  execMove move board
   gameFlow

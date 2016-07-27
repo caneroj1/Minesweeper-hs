@@ -42,17 +42,20 @@ revealAllMines b@Board{..} =
   where
     revealedBoard =
       map (\case
-              Mine -> RevealedMine
+              Mine        -> RevealedMine
+              FlaggedMine -> RevealedMine
               tile -> tile) $ elems tiles
     revealedArray = listArray (bounds tiles) revealedBoard
 
 clear :: Board -> Bool
-clear Board{..} = not . any
+clear Board{..} = all
   (\case
-      RevealedMine -> False
-      Mine         -> False
-      Revealed _   -> False
-      Hidden _     -> True
+      RevealedMine  -> False
+      Hidden _      -> False
+      FlaggedTile _ -> False
+      FlaggedMine   -> True
+      Revealed _    -> True
+      Mine          -> True
   ) $ elems tiles
 
 tileAt :: Board -> BoardIdx -> Tile

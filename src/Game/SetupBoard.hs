@@ -25,7 +25,6 @@ incIfOpen :: (BoardIdx, Int) -> TwoDArray -> TwoDArray
 incIfOpen (i@(row, col), n) arr = modifyWith item
   where item = arr ! (row, col)
         modifyWith Mine         = arr
-        modifyWith (Revealed _) = arr // [(i, Revealed n)]
         modifyWith (Hidden   _) = arr // [(i, Hidden n)]
 
 accumTileCounts :: Bounds -> [BoardAssoc] -> CountArray
