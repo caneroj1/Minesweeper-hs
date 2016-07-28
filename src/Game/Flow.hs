@@ -12,11 +12,15 @@ import System.Exit
 import System.Console.Haskeline
 import Data.Text (unpack, split, pack)
 import System.Random (getStdGen)
+import System.Console.ANSI (clearScreen, setCursorPosition)
 
 type GameFlow = StateT Board IO ()
 
+resetConsole = clearScreen >> setCursorPosition 0 0
+
 minesweeper :: Int -> Int -> Int -> IO ()
 minesweeper rows cols mines = do
+  resetConsole
   gen          <- getStdGen
   let playingBoard = setupBoard mines board gen
     in
@@ -58,4 +62,5 @@ gameFlow = do
   lift $ print board
   move <- lift getInput
   execMove move board
+  lift resetConsole
   gameFlow

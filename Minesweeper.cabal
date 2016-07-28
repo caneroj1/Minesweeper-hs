@@ -35,6 +35,7 @@ library
                      , text
                      , containers
                      , random
+                     , ansi-terminal
   cpp-options:         -DRELEASE
   ghc-options:         -O3
   default-language:    Haskell2010
