@@ -11,22 +11,18 @@ import Control.Monad.State.Lazy
 import System.Exit
 import System.Console.Haskeline
 import Data.Text (unpack, split, pack)
+import System.Random (getStdGen)
 
 type GameFlow = StateT Board IO ()
 
-minesweeper :: Int -> Int -> IO ()
-minesweeper rows cols = evalStateT gameFlow $ mb10--emptyBoard rows cols
+minesweeper :: Int -> Int -> Int -> IO ()
+minesweeper rows cols mines = do
+  gen          <- getStdGen
+  let playingBoard = setupBoard mines board gen
+    in
+      evalStateT gameFlow playingBoard
   where
-    mb = emptyBoard rows cols
-    mb2 = updateAt mb  (1,1) Mine
-    mb3 = updateAt mb2 (0, 3) Mine
-    mb4 = updateAt mb3 (5, 5) Mine
-    mb5 = updateAt mb4 (7, 7) Mine
-    mb6 = updateAt mb5 (0, 0) Mine
-    mb7 = updateAt mb6 (0, 6) Mine
-    mb8 = updateAt mb7 (2, 6) Mine
-    mb9 = updateAt mb8 (7, 5) Mine
-    mb10 = setupBoard mb9
+    board        = emptyBoard rows cols
 
 printStatus :: Either Defeat Board -> GameFlow
 printStatus (Left _) = do

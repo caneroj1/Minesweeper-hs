@@ -2,4 +2,4 @@ module Main where
 
 import Lib
 
-main = minesweeper 8 8
+main = minesweeper 8 8 17
